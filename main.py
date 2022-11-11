@@ -2,11 +2,12 @@ import os
 import time
 from modules import functions
 
-#from contextlib import suppress
+if "__main__" == __name__:
+    workingDirectory  = os.path.realpath(os.sys.argv[0])
+    workingDirectory = workingDirectory.removesuffix('\main.py')
 
-#! hacer que el path sea elegible y no hardcodeado
-path = r"C:\Users\Santiago\Desktop\Programas\Apps\proj1\venv"
-archivos = functions.lista_archivos(path)
+
+archivos = functions.lista_archivos(workingDirectory)
 
 # print lista de archivos
 for i, a in enumerate(archivos):
