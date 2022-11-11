@@ -27,9 +27,11 @@ else:
     with open(archivo, 'r') as file:
         tareas = file.readlines()  # readlines devuelve una lista
 
+count = 0
+
 # loop del programa
 while __name__ == '__main__':
-    #count = 0
+
     fecha = time.strftime('%d %B, %Y, %H:%M')
     # user prompt para seleccionar función
     u_prompt = input('Escriba AGREGAR, VER, EDITAR, COMPLETAR, o SALIR: ')
@@ -41,9 +43,18 @@ while __name__ == '__main__':
         #agregar tarea
         case 'agregar':
             while True:
+
                 tarea = input("Ingrese una tarea: "+ '\n'
                           "(Para volver ingrese 0)") +  '\n'
                 if tarea.strip('\n') == '0':
+                    if count > 1:
+                        print(f'Se agregaron {count} tareas nuevas')
+                        count = 0
+                    elif count == 1:
+                        print('Se agregó 1 tarea nueva')
+                        count = 0
+                    else:
+                        break
                     break
 
                 tarea = tarea.strip('\n')+ '\t' + '|' + '\t' + fecha +'\n'
@@ -53,7 +64,7 @@ while __name__ == '__main__':
                 functions.save(archivo, tareas)
                 stripped = tarea.strip('\n').split('|')[0]
                 print(f'Se agregó "{stripped.strip()}".')
-
+                count += 1
 
         #ver la lista
         case 'ver':
@@ -93,7 +104,7 @@ while __name__ == '__main__':
         case 'completar':
             functions.show(tareas)
             while True:
-                count =+ 1
+
                 try:
                     tarea_comp = int(input('Ingrese el número de la tarea completa: \n'
                                             '(Ingrese 0 para volver al menú)'))
@@ -103,12 +114,21 @@ while __name__ == '__main__':
                 if tarea_comp > len(tareas):
                     print('Número fuera del índice')
                 elif tarea_comp == 0:
+                    if count > 1:
+                        print(f'Completaste {count} tareas nuevas')
+                        count = 0
+                    elif count == 1:
+                        print('Completaste 1 tarea nueva')
+                        count = 0
+                    else:
+                        break
                     break
                 else:
                     tarea_comp = tarea_comp - 1
                     tarea = tareas[tarea_comp].strip('\n')
                     print(f'¡Felicitaciones! ¡Completaste "{tarea}"!')
                     tareas.pop(tarea_comp)
+                    count += 1
             # save
             functions.save(archivo, tareas)
 

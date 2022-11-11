@@ -1,6 +1,5 @@
 import os
 
-
 def lista_archivos(path):
     """Devuelve lista de archivos .txt en el path especificado más un item 'Crear nuevo' """
     archivos = []
