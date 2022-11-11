@@ -104,7 +104,6 @@ while __name__ == '__main__':
         case 'completar':
             functions.show(tareas)
             while True:
-
                 try:
                     tarea_comp = int(input('Ingrese el número de la tarea completa: \n'
                                             '(Ingrese 0 para volver al menú)'))
