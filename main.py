@@ -25,13 +25,11 @@ if archivo is archivos[-1]:
 else:
     with open(archivo, 'r') as file:
         tareas = file.readlines()  # readlines devuelve una lista
-print(tareas)
+
 # loop del programa
 while __name__ == '__main__':
     #count = 0
-    print(tareas)
-    fecha = time.strftime('%d %B, %Y')
-    print(fecha)
+    fecha = time.strftime('%d %B, %Y, %H:%M')
     # user prompt para seleccionar función
     u_prompt = input('Escriba AGREGAR, VER, EDITAR, COMPLETAR, o SALIR: ')
     # formateo del input
@@ -53,7 +51,7 @@ while __name__ == '__main__':
 
                 functions.save(archivo, tareas)
                 stripped = tarea.strip('\n').split('|')[0]
-                print(f'Se agregó "{stripped}".')
+                print(f'Se agregó "{stripped.strip()}".')
 
 
         #ver la lista

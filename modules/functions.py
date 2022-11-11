@@ -40,7 +40,7 @@ def show(lista):
     """Muestra el contenido de una lista enumerándola y stripeando las newlines"""
     for i, tarea in enumerate(lista):
         tarea = tarea.strip('\n')
-        tarea = tarea.split('|')[0]
+        #tarea = tarea.split('|')[0]
         msj = f"{i + 1}. {tarea}"
         print(msj)
 
