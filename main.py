@@ -1,38 +1,34 @@
 import os
 import time
-
 import pandas as pd
 from modules import functions
 
 if "__main__" == __name__:
-    workingDirectory  = os.path.realpath(os.sys.argv[0])
+    workingDirectory = os.path.realpath(os.sys.argv[0])
     workingDirectory = workingDirectory.removesuffix('\main.py')
-
 
 archivos = functions.lista_archivos(workingDirectory)
 
 # print lista de archivos
 for i, a in enumerate(archivos):
-    a = a.removesuffix('.txt')
     a = a.removesuffix('.csv')
-    print(f'{i+1}. {a}')
+    print(f'{i + 1}. {a}')
 
 # seleccionar archivo
 archivo = functions.elegir_archivo(archivos)
 
-# abrimos el archivo para leer y guardamos la lista. Si se seleccionó "crear nuevo" se crea uno nuevo
+# Abrimos el archivo para leer y guardamos la lista. Si se seleccionó "crear nuevo" se crea uno nuevo
 # y señalamos a una lista vacía.
 if archivo is archivos[-1]:
-    archivo = input('Ingrese un nombre para la nueva lista: ') + '.txt'
-    open(archivo, 'w')
-    tareas = []
+    archivo = input('Ingrese un nombre para la nueva lista: ') + '.csv'
+    dataframe = pd.DataFrame(columns=['Entrada', 'Fecha'])
 else:
-    with open(archivo, 'r') as file:
-        tareas = file.readlines()  # read lines devuelve una lista
+    dataframe = pd.read_csv(archivo)
+    if 'Unnamed: 0' in dataframe.columns:
+        dataframe.drop('Unnamed: 0', axis=1, inplace=True)
 
+dataframe.index += 1
 
-dataframe = functions.dataframe(tareas)
-# dataframe = pd.DataFrame(tareas)
 print(dataframe)
 count = 0
 
@@ -45,14 +41,14 @@ while __name__ == '__main__':
     # formateo del input
     u_prompt = u_prompt.lower().strip()
 
-    # matchear input
+    # Matchear input
     match u_prompt:
         # agregar tarea
         case 'agregar':
             while True:
 
-                tarea = input("Ingrese una tarea: "+ '\n'
-                              "(Para volver ingrese 0)") + '\n'
+                tarea = input("Ingrese una tarea: " + '\n'
+                                                      "(Para volver ingrese 0)")
                 if tarea.strip('\n') == '0':
                     if count > 1:
                         print(f'Se agregaron {count} tareas nuevas')
@@ -64,27 +60,23 @@ while __name__ == '__main__':
                         break
                     break
 
-                tarea = tarea.strip('\n')+ '\t' + '|' + '\t' + fecha +'\n'
-
-                tareas.append(tarea)
-
-                # functions.dataframe(tareas).to_csv(archivo)
-                functions.save(archivo, tareas)
-                stripped = tarea.strip('\n').split('|')[0]
-                print(f'Se agregó "{stripped.strip()}".')
+                dataframe.loc[len(dataframe) + 1] = [tarea, fecha]
+                print(dataframe)
+                dataframe.to_csv(archivo, index=False)
+                print(f'Se agregó "{tarea}"')
                 count += 1
 
         # ver la lista
         case 'ver':
-            if tareas:
+            if dataframe.empty:
+                print('La lista está vacía')
+            else:
                 print(dataframe)
-                # functions.show(tareas)
-            if not tareas:
-                print('No hay tareas pendientes')
 
         # editar algún item
         case 'editar':
-            functions.show(tareas)
+            # functions.show(tareas)
+            print(dataframe)
             while True:
                 try:
                     edit = int(input('Ingrese el número del elemento a editar: \n'
@@ -95,23 +87,24 @@ while __name__ == '__main__':
                     continue
                 # aquí usamos un if porque un IndexError no saltaría hasta el bloque else
                 # y queremos agarrar el error antes de que corra lo demás
-                if edit > len(tareas) or 0 > edit:
+                if edit > len(dataframe) or 0 > edit:
                     print('Número no válido')
                 # si el input es 0
                 elif edit == 0:
                     break
                 # input válido
                 else:
-                    edit = edit - 1
-                    n_tarea = input('Edite tranquilo: ') + '\n'
-                    tareas[edit] = n_tarea
+                    n_tarea = input('Edite tranquilo: ')
+                    dataframe.loc[edit]['Entrada'] = n_tarea
+                    dataframe.loc[edit]['Fecha'] = fecha
                     print('Se editó la tarea exitosamente')
             # save
-            functions.save(archivo, tareas)
+
+            dataframe.to_csv(archivo, index=False)
 
         # Completar una tarea
         case 'completar':
-            functions.show(tareas)
+            print(dataframe)
             while True:
                 try:
                     tarea_comp = int(input('Ingrese el número de la tarea completa: \n'
@@ -119,7 +112,7 @@ while __name__ == '__main__':
                 except ValueError:
                     print('Debe ingresar un número')
                     continue
-                if tarea_comp > len(tareas):
+                if tarea_comp > len(dataframe) or 0 > tarea_comp:
                     print('Número fuera del índice')
                 elif tarea_comp == 0:
                     if count > 1:
@@ -132,13 +125,17 @@ while __name__ == '__main__':
                         break
                     break
                 else:
-                    tarea_comp = tarea_comp - 1
-                    tarea = tareas[tarea_comp].strip('\n')
+
+                    tarea = dataframe.loc[tarea_comp]['Entrada']
                     print(f'¡Felicitaciones! ¡Completaste "{tarea}"!')
-                    tareas.pop(tarea_comp)
+                    dataframe.drop(index=tarea_comp, axis=0, inplace=True)
+                    # tareas.pop(tarea_comp)
                     count += 1
             # save
-            functions.save(archivo, tareas)
+            dataframe.reset_index(inplace=True, drop=True)
+            dataframe.index += 1
+            dataframe.to_csv(archivo, index=False)
+            # functions.save(archivo, tareas)
 
         # escape
         case 'salir':

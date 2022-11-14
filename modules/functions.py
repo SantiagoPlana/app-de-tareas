@@ -1,11 +1,12 @@
 import os
 import pandas as pd
 
+
 def lista_archivos(path):
     """Devuelve lista de archivos .txt en el path especificado más un item 'Crear nuevo' """
     archivos = []
     for x in os.listdir(path):
-        if x.endswith('.txt') or x.endswith('.csv'):
+        if x.endswith('.csv'):
             archivos.append(x)
     archivos.append('Crear nuevo')
     return archivos
@@ -17,9 +18,8 @@ def elegir_archivo(lista):
     como se muestre en la lista. """
     while True:
         try:
-            #global archivos
             archivo = int(input('Ingrese el número de la lista de tareas que desea abrir: '))
-            archivo = lista[archivo -1]
+            archivo = lista[archivo - 1]
             break
         except IndexError:
             print('Valor fuera de índice')
@@ -27,22 +27,6 @@ def elegir_archivo(lista):
             print('Entrada no válida')
     return archivo
 
-
-# función para el write
-def save(arch, lista):
-    """Escribe el contenido de una lista en un archivo .txt"""
-    with open(arch, 'w') as file:
-        file.writelines(lista)
-
-
-# printear la lista
-def show(lista):
-    """Muestra el contenido de una lista enumerándola y stripeando las newlines"""
-    for i, tarea in enumerate(lista):
-        tarea = tarea.strip('\n')
-        #tarea = tarea.split('|')[0]
-        msj = f"{i + 1}. {tarea}"
-        print(msj)
 
 def dataframe(lista):
     """Recibe una lista y devuelve un dataframe con cada item formateado y ordenado"""
@@ -55,12 +39,12 @@ def dataframe(lista):
         except IndexError:
             pass
 
-    list = [k.removesuffix('\t') for k, v in dic.items()]
+    list_k = [k.removesuffix('\t') for k, v in dic.items()]
     list_v = [v.removeprefix('\t') for k, v in dic.items()]
 
-    sheet = pd.DataFrame(columns = ['Entrada', 'Fecha'])
+    sheet = pd.DataFrame(columns=['Entrada', 'Fecha'])
 
-    sheet['Entrada'] = list
+    sheet['Entrada'] = list_k
     sheet['Fecha'] = list_v
 
     return sheet
