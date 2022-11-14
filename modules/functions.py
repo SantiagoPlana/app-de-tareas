@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 
 def lista_archivos(path):
     """Devuelve lista de archivos .txt en el path especificado más un item 'Crear nuevo' """
@@ -43,3 +44,20 @@ def show(lista):
         msj = f"{i + 1}. {tarea}"
         print(msj)
 
+def dataframe(lista):
+    dic = {}
+    for i in x:
+        i = i.strip('\n').strip('\t')
+        #i = i.strip('\t')
+        i = i.split('|')
+        dic[i[0]] = i[1]
+
+    list = [k.removesuffix('\t') for k, v in dic.items()]
+    list_v = [v.removeprefix('\t') for k, v in dic.items()]
+
+    sheet = pd.DataFrame(columns = ['Entrada', 'Fecha'])
+
+    sheet['Entrada'] = list
+    sheet['Fecha'] = list_v
+
+    return sheet
