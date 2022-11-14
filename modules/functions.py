@@ -3,7 +3,7 @@ import pandas as pd
 
 
 def lista_archivos(path):
-    """Devuelve lista de archivos .txt en el path especificado más un item 'Crear nuevo' """
+    """Devuelve lista de archivos .csv en el path especificado más un item 'Crear nuevo' """
     archivos = []
     for x in os.listdir(path):
         if x.endswith('.csv'):

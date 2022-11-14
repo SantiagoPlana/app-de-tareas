@@ -70,7 +70,10 @@ while __name__ == '__main__':
             if dataframe.empty:
                 print('La lista está vacía')
             else:
-                print(dataframe)
+                for i in dataframe.index:
+                    entrada = dataframe.loc[i]['Entrada']
+                    fecha = dataframe.loc[i]['Fecha']
+                    print(str(i) + '. ' + entrada + '\t' + fecha)
 
         # editar algún item
         case 'editar':
