@@ -5,7 +5,7 @@ def lista_archivos(path):
     """Devuelve lista de archivos .txt en el path especificado más un item 'Crear nuevo' """
     archivos = []
     for x in os.listdir(path):
-        if x.endswith('.txt'):
+        if x.endswith('.txt') or x.endswith('.csv'):
             archivos.append(x)
     archivos.append('Crear nuevo')
     return archivos
@@ -45,12 +45,15 @@ def show(lista):
         print(msj)
 
 def dataframe(lista):
+    """Recibe una lista y devuelve un dataframe con cada item formateado y ordenado"""
     dic = {}
-    for i in x:
+    for i in lista:
         i = i.strip('\n').strip('\t')
-        #i = i.strip('\t')
         i = i.split('|')
-        dic[i[0]] = i[1]
+        try:
+            dic[i[0]] = i[1]
+        except IndexError:
+            pass
 
     list = [k.removesuffix('\t') for k, v in dic.items()]
     list_v = [v.removeprefix('\t') for k, v in dic.items()]

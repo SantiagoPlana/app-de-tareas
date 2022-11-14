@@ -1,5 +1,7 @@
 import os
 import time
+
+import pandas as pd
 from modules import functions
 
 if "__main__" == __name__:
@@ -12,6 +14,7 @@ archivos = functions.lista_archivos(workingDirectory)
 # print lista de archivos
 for i, a in enumerate(archivos):
     a = a.removesuffix('.txt')
+    a = a.removesuffix('.csv')
     print(f'{i+1}. {a}')
 
 # seleccionar archivo
@@ -25,8 +28,12 @@ if archivo is archivos[-1]:
     tareas = []
 else:
     with open(archivo, 'r') as file:
-        tareas = file.readlines()  # readlines devuelve una lista
+        tareas = file.readlines()  # read lines devuelve una lista
 
+
+dataframe = functions.dataframe(tareas)
+# dataframe = pd.DataFrame(tareas)
+print(dataframe)
 count = 0
 
 # loop del programa
@@ -40,12 +47,12 @@ while __name__ == '__main__':
 
     # matchear input
     match u_prompt:
-        #agregar tarea
+        # agregar tarea
         case 'agregar':
             while True:
 
                 tarea = input("Ingrese una tarea: "+ '\n'
-                          "(Para volver ingrese 0)") +  '\n'
+                              "(Para volver ingrese 0)") + '\n'
                 if tarea.strip('\n') == '0':
                     if count > 1:
                         print(f'Se agregaron {count} tareas nuevas')
@@ -61,15 +68,17 @@ while __name__ == '__main__':
 
                 tareas.append(tarea)
 
+                # functions.dataframe(tareas).to_csv(archivo)
                 functions.save(archivo, tareas)
                 stripped = tarea.strip('\n').split('|')[0]
                 print(f'Se agregó "{stripped.strip()}".')
                 count += 1
 
-        #ver la lista
+        # ver la lista
         case 'ver':
             if tareas:
-                functions.show(tareas)
+                print(dataframe)
+                # functions.show(tareas)
             if not tareas:
                 print('No hay tareas pendientes')
 
@@ -79,7 +88,7 @@ while __name__ == '__main__':
             while True:
                 try:
                     edit = int(input('Ingrese el número del elemento a editar: \n'
-                                    '(Ingrese 0 para volver al menú)'))
+                                     '(Ingrese 0 para volver al menú)'))
                 # inputs no válidos
                 except ValueError:
                     print('Debe ingresar un número')
@@ -106,7 +115,7 @@ while __name__ == '__main__':
             while True:
                 try:
                     tarea_comp = int(input('Ingrese el número de la tarea completa: \n'
-                                            '(Ingrese 0 para volver al menú)'))
+                                           '(Ingrese 0 para volver al menú)'))
                 except ValueError:
                     print('Debe ingresar un número')
                     continue
