@@ -1,25 +1,24 @@
-import os
 import time
 import pandas as pd
 from modules import functions
+import glob
 
 if "__main__" == __name__:
-    workingDirectory = os.path.realpath(os.sys.argv[0])
-    workingDirectory = workingDirectory.removesuffix('\main.py')
+    files = glob.glob('*.csv')
 
-archivos = functions.lista_archivos(workingDirectory)
 
+files.append('Crear Nuevo')
 # print lista de archivos
-for i, a in enumerate(archivos):
+for i, a in enumerate(files):
     a = a.removesuffix('.csv')
     print(f'{i + 1}. {a}')
 
 # seleccionar archivo
-archivo = functions.elegir_archivo(archivos)
+archivo = functions.elegir_archivo(files)
 
 # Abrimos el archivo para leer y guardamos la lista. Si se seleccionó "crear nuevo" se crea uno nuevo
 # y señalamos a una lista vacía.
-if archivo is archivos[-1]:
+if archivo is files[-1]:
     archivo = input('Ingrese un nombre para la nueva lista: ') + '.csv'
     dataframe = pd.DataFrame(columns=['Entrada', 'Fecha'])
 else:
@@ -135,7 +134,6 @@ while __name__ == '__main__':
             dataframe.reset_index(inplace=True, drop=True)
             dataframe.index += 1
             dataframe.to_csv(archivo, index=False)
-            # functions.save(archivo, tareas)
 
         # escape
         case 'salir':
