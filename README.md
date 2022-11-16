@@ -1,2 +1,2 @@
 # app-de-tareas
-Esta es una app de tareas
+App de tareas básica.
