@@ -1,4 +1,4 @@
-from modules import functions
+# from modules import functions
 import PySimpleGUI as sg
 import pandas as pd
 import time
@@ -13,6 +13,7 @@ selectButton = sg.FilesBrowse('Seleccionar Lista', key='Files', target='Files',
 
 addButton = sg.Button('Añadir')
 editButton = sg.Button('Editar')
+completeButton = sg.Button('Completar')
 exitButton = sg.Button('Salir')
 
 listaT = []
@@ -23,7 +24,7 @@ listBox = sg.Listbox(values=listaT, key='Tareas',
 window = sg.Window('App de Tareas',
                    layout=[[selectButton], [label],
                            [inputBox, addButton],
-                           [listBox, editButton],
+                           [listBox, editButton, completeButton],
                            [exitButton], [mostrarButton]],
                    font=('Georgia', 13))
 
@@ -35,8 +36,8 @@ while True:
     print(event, values)
     path = values['Files']
     listaTareas = pd.read_csv(path)
-    print(listaTareas)
     listaTareas.index += 1
+    print(listaTareas)
     if count == 0:
         window['Tareas'].update(values=listaTareas['Entrada'])
         count += 1
@@ -54,7 +55,12 @@ while True:
             listaTareas.loc[index, ['Entrada']] = nuevaTarea
             listaTareas.to_csv(path.split('/')[-1], index=False)
             window['Tareas'].update(values=listaTareas['Entrada'])
-            # pass
+        case 'Completar':
+            tareaCompleta = values['Tareas'][0]
+            index = listaTareas.loc[listaTareas['Entrada'] == tareaCompleta].index[0]
+            listaTareas.drop(index, axis=0, inplace=True)
+            listaTareas.to_csv(path.split('/')[-1], index=False)
+            window['Tareas'].update(values=listaTareas['Entrada'])
 
         # Exit
         case sg.WIN_CLOSED:
