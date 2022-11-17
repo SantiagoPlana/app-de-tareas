@@ -7,7 +7,7 @@ sg.theme('DarkGrey14')
 label = sg.Text('Escriba una tarea: ')
 inputBox = sg.InputText(tooltip='', key='Tarea')
 
-mostrarButton = sg.Button('')
+
 selectButton = sg.FilesBrowse('Seleccionar Lista', key='Files', target='Files',
                               file_types=(("CSV files", "*.csv"),), enable_events=True)
 
@@ -18,7 +18,7 @@ exitButton = sg.Button('Salir')
 
 listaT = []
 listBox = sg.Listbox(values=listaT, key='Tareas',
-                     enable_events=True, size=(45, 10),
+                     enable_events=True, size=(60, 10),
                      select_mode='LISTBOX_SELECT_MODE_SINGLE',
                      horizontal_scroll=True)
 
@@ -26,24 +26,22 @@ window = sg.Window('App de Tareas',
                    layout=[[selectButton], [label],
                            [inputBox, addButton],
                            [listBox, editButton, completeButton],
-                           [exitButton], [mostrarButton]],
+                           [exitButton]],
                    font=('Calibri', 13),
-                   size=(700, 500))
+                   size=(750, 500))
 
 count = 0
 while True:
     fecha = time.strftime('%d %B, %Y, %H:%M')
     event, values = window.read()
-    # window.refresh()
-    print(event, values)
-    path = values['Files']
-    listaTareas = pd.read_csv(path)
-    listaTareas.index += 1
-    print(listaTareas)
-
-    if count == 0:
-        window['Tareas'].update(values=listaTareas['Entrada'])
-        count += 1
+    if values['Files']:
+        path = values['Files']
+        listaTareas = pd.read_csv(path)
+        listaTareas.index += 1
+        print(listaTareas)
+        if count == 0:
+            window['Tareas'].update(values=listaTareas['Entrada'])
+            count += 1
     match event:
         case 'Añadir':
             nuevaTarea = values['Tarea']
@@ -65,6 +63,9 @@ while True:
             listaTareas.to_csv(path.split('/')[-1], index=False)
             window['Tareas'].update(values=listaTareas['Entrada'])
 
+        # Update del input box cuando se selecciona elemento de la lista
+        case 'Tareas':
+            window['Tarea'].update(value=values['Tareas'][0])
         # Exit
         case sg.WIN_CLOSED:
             break
