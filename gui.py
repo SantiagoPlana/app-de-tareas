@@ -3,7 +3,7 @@ import PySimpleGUI as sg
 import pandas as pd
 import time
 
-sg.theme('DarkTeal2')
+sg.theme('DarkGrey14')
 label = sg.Text('Escriba una tarea: ')
 inputBox = sg.InputText(tooltip='', key='Tarea')
 
@@ -19,14 +19,16 @@ exitButton = sg.Button('Salir')
 listaT = []
 listBox = sg.Listbox(values=listaT, key='Tareas',
                      enable_events=True, size=(45, 10),
-                     select_mode='LISTBOX_SELECT_MODE_SINGLE')
+                     select_mode='LISTBOX_SELECT_MODE_SINGLE',
+                     horizontal_scroll=True)
 
 window = sg.Window('App de Tareas',
                    layout=[[selectButton], [label],
                            [inputBox, addButton],
                            [listBox, editButton, completeButton],
                            [exitButton], [mostrarButton]],
-                   font=('Georgia', 13))
+                   font=('Calibri', 13),
+                   size=(700, 500))
 
 count = 0
 while True:
@@ -38,6 +40,7 @@ while True:
     listaTareas = pd.read_csv(path)
     listaTareas.index += 1
     print(listaTareas)
+
     if count == 0:
         window['Tareas'].update(values=listaTareas['Entrada'])
         count += 1
