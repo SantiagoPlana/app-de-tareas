@@ -1,20 +1,25 @@
 # from modules import functions
+import os
 import PySimpleGUI as sg
 import pandas as pd
 import time
 
+script_path = os.path.dirname(__file__)
+print(script_path)
 sg.theme('DarkGrey14')
 label = sg.Text('Escriba una tarea: ')
-inputBox = sg.InputText(tooltip='', key='Tarea')
 
+inputBox = sg.InputText(tooltip='', key='Tarea')
 
 selectButton = sg.FilesBrowse('Seleccionar Lista', key='Files', target='Files',
                               file_types=(("CSV files", "*.csv"),), enable_events=True)
-
+# guardar_comoButton = sg.FolderBrowse('Guardar Como', key='Save-as', target='Save-as', enable_events=True)
+guardarButton = sg.Button('Guardar como')
 addButton = sg.Button('Añadir')
 editButton = sg.Button('Editar')
 completeButton = sg.Button('Completar')
 exitButton = sg.Button('Salir')
+
 
 listaT = []
 listBox = sg.Listbox(values=listaT, key='Tareas',
@@ -22,18 +27,22 @@ listBox = sg.Listbox(values=listaT, key='Tareas',
                      select_mode='LISTBOX_SELECT_MODE_SINGLE',
                      horizontal_scroll=True)
 
+layout = [[selectButton, guardarButton], [label], [inputBox, addButton],
+          [listBox, editButton, completeButton], [exitButton]]
+
 window = sg.Window('App de Tareas',
-                   layout=[[selectButton], [label],
-                           [inputBox, addButton],
-                           [listBox, editButton, completeButton],
-                           [exitButton]],
+                   layout=layout,
                    font=('Calibri', 13),
                    size=(750, 500))
 
 count = 0
+# default path
+# path = None
+listaTareas = None
 while True:
     fecha = time.strftime('%d %B, %Y, %H:%M')
     event, values = window.read()
+    print(event, values)
     if values['Files']:
         path = values['Files']
         listaTareas = pd.read_csv(path)
@@ -42,12 +51,34 @@ while True:
         if count == 0:
             window['Tareas'].update(values=listaTareas['Entrada'])
             count += 1
+        if count == 0 and not values['Files']:
+            path = script_path + '/nueva lista.csv'
+            print(path)
+            count += 1
+        print('se guardará aquí')
     match event:
+        case 'Guardar como':
+            filename = sg.popup_get_file('', save_as=True, no_window=True,
+                                         file_types=(('All CSV Files', '*.csv'), ('All Files', '*.*')),
+                                         initial_folder=script_path)
         case 'Añadir':
             nuevaTarea = values['Tarea']
-            listaTareas.loc[len(listaTareas) + 1] = [nuevaTarea, fecha]
-            listaTareas.to_csv(path.split('/')[-1], index=False)
-            window['Tareas'].update(values=listaTareas['Entrada'])
+            try:
+                listaTareas.loc[len(listaTareas) + 1] = [nuevaTarea, fecha]
+                listaTareas.to_csv(path.split('/')[-1], index=False)
+                window['Tareas'].update(values=listaTareas['Entrada'])
+            except (NameError, AttributeError):
+                if count == 0:
+                    listaTareas = pd.DataFrame(columns=['Entrada', 'Fecha'])
+                    listaTareas.index += 1
+                    count += 1
+                    listaTareas.loc[len(listaTareas) + 1] = [nuevaTarea, fecha]
+                    print(listaTareas)
+
+                listaTareas.to_csv(script_path + '/nueva lista.csv', index=False)
+
+                window['Tareas'].update(values=listaTareas['Entrada'])
+
             print(listaTareas)
         case 'Editar':
             tarea_aEditar = values['Tareas'][0]
