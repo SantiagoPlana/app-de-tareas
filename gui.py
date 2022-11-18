@@ -13,13 +13,13 @@ inputBox = sg.InputText(tooltip='', key='Tarea')
 
 selectButton = sg.FilesBrowse('Seleccionar Lista', key='Files', target='Files',
                               file_types=(("CSV files", "*.csv"),), enable_events=True)
-# guardar_comoButton = sg.FolderBrowse('Guardar Como', key='Save-as', target='Save-as', enable_events=True)
-guardarButton = sg.Button('Guardar como')
+
 addButton = sg.Button('Añadir')
 editButton = sg.Button('Editar')
 completeButton = sg.Button('Completar')
 exitButton = sg.Button('Salir')
-
+saveAs = sg.FileSaveAs('Save as', key='Save', file_types=(('CSV', '.csv'), ),
+                       target='Save', enable_events=True)
 
 listaT = []
 listBox = sg.Listbox(values=listaT, key='Tareas',
@@ -27,7 +27,7 @@ listBox = sg.Listbox(values=listaT, key='Tareas',
                      select_mode='LISTBOX_SELECT_MODE_SINGLE',
                      horizontal_scroll=True)
 
-layout = [[selectButton, guardarButton], [label], [inputBox, addButton],
+layout = [[selectButton, saveAs], [label], [inputBox, addButton],
           [listBox, editButton, completeButton], [exitButton]]
 
 window = sg.Window('App de Tareas',
@@ -55,12 +55,10 @@ while True:
             path = script_path + '/nueva lista.csv'
             print(path)
             count += 1
-        print('se guardará aquí')
+    if values['Save']:
+        path = values['Save'].split('/')[-1]
+        listaTareas.to_csv(path, index=False)
     match event:
-        case 'Guardar como':
-            filename = sg.popup_get_file('', save_as=True, no_window=True,
-                                         file_types=(('All CSV Files', '*.csv'), ('All Files', '*.*')),
-                                         initial_folder=script_path)
         case 'Añadir':
             nuevaTarea = values['Tarea']
             try:
