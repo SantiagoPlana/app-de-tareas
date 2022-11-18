@@ -5,7 +5,6 @@ import pandas as pd
 import time
 
 script_path = os.path.dirname(__file__)
-print(script_path)
 sg.theme('DarkGrey14')
 label = sg.Text('Escriba una tarea: ')
 
@@ -34,8 +33,8 @@ layout = [[selectButton, saveAs], [label], [inputBox, addButton],
 
 window = sg.Window('App de Tareas',
                    layout=layout,
-                   font=('Calibri', 13),
-                   size=(750, 500))
+                   font=('Calibri', 14),
+                   size=(820, 500))
 
 count = 0
 listaTareas = None
@@ -48,7 +47,6 @@ while True:
         listaTareas = pd.read_csv(path)
         path = path.split('/')[-1]
         listaTareas.index += 1
-        print(listaTareas)
         if count == 0:
             window['Tareas'].update(values=listaTareas['Entrada'])
             count += 1
@@ -101,9 +99,6 @@ while True:
             except IndexError:
                 sg.popup('Ningún elemento seleccionado')
 
-            # save and update
-            # window['Mensaje'].update(value=f'Se guardó el archivo {path.removesuffix(".csv")}')
-            # window['Tareas'].update(values=listaTareas['Entrada'])
         case 'Completar':
             try:
                 tareaCompleta = values['Tareas'][0]
