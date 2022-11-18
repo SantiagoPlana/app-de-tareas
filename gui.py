@@ -52,10 +52,12 @@ while True:
         if count == 0:
             window['Tareas'].update(values=listaTareas['Entrada'])
             count += 1
-        if count == 0 and not values['Files']:
-            path = script_path + '/nueva lista.csv'
-            print(path)
-            count += 1
+
+    # ¿Qué carajo hacer con esto? Para qué lo habré hecho
+    if count == 0 and not values['Files']:
+        path = script_path + '/nueva lista.csv'
+        print(path)
+        count += 1
     if values['Save']:
         path = values['Save'].split('/')[-1]
 
@@ -87,24 +89,35 @@ while True:
 
             print(listaTareas)
         case 'Editar':
-            tarea_aEditar = values['Tareas'][0]
-            nuevaTarea = values['Tarea']
-            index = listaTareas.loc[listaTareas['Entrada'] == tarea_aEditar].index[0]
-            listaTareas.loc[index, ['Entrada']] = nuevaTarea
-            listaTareas.to_csv(path.split('/')[-1], index=False)
+            try:
+                tarea_aEditar = values['Tareas'][0]
+                nuevaTarea = values['Tarea']
+                index = listaTareas.loc[listaTareas['Entrada'] == tarea_aEditar].index[0]
+                listaTareas.loc[index, ['Entrada']] = nuevaTarea
+                listaTareas.to_csv(path.split('/')[-1], index=False)
+                # save and update
+                window['Mensaje'].update(value=f'Se guardó el archivo {path.removesuffix(".csv")}')
+                window['Tareas'].update(values=listaTareas['Entrada'])
+            except IndexError:
+                sg.popup('Ningún elemento seleccionado')
 
             # save and update
-            window['Mensaje'].update(value=f'Se guardó el archivo {path.removesuffix(".csv")}')
-            window['Tareas'].update(values=listaTareas['Entrada'])
+            # window['Mensaje'].update(value=f'Se guardó el archivo {path.removesuffix(".csv")}')
+            # window['Tareas'].update(values=listaTareas['Entrada'])
         case 'Completar':
-            tareaCompleta = values['Tareas'][0]
-            index = listaTareas.loc[listaTareas['Entrada'] == tareaCompleta].index[0]
-            listaTareas.drop(index, axis=0, inplace=True)
-            listaTareas.to_csv(path.split('/')[-1], index=False)
+            try:
+                tareaCompleta = values['Tareas'][0]
+                index = listaTareas.loc[listaTareas['Entrada'] == tareaCompleta].index[0]
+                listaTareas.drop(index, axis=0, inplace=True)
+                listaTareas.to_csv(path.split('/')[-1], index=False)
 
-            # save and update
-            window['Mensaje'].update(value=f'Se guardó el archivo {path.removesuffix(".csv")}')
-            window['Tareas'].update(values=listaTareas['Entrada'])
+                # limpia la input box
+                window['Tarea'].update(value='')
+                # save and update
+                window['Mensaje'].update(value=f'Se guardó el archivo {path.removesuffix(".csv")}')
+                window['Tareas'].update(values=listaTareas['Entrada'])
+            except IndexError:
+                sg.popup('Ningún elemento seleccionado')
 
         # Update del input box cuando se selecciona elemento de la lista
         case 'Tareas':
