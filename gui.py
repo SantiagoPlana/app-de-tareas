@@ -45,6 +45,7 @@ window = sg.Window('App de Tareas',
 count = 0
 listaTareas = None
 nombre = ''
+path = ''
 while True:
     fecha = time.strftime('%d %B, %Y, %H:%M')
     event, values = window.read()
