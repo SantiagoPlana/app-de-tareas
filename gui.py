@@ -51,11 +51,10 @@ while True:
             window['Tareas'].update(values=listaTareas['Entrada'])
             count += 1
 
-    # ¿Qué carajo hacer con esto? Para qué lo habré hecho
     if count == 0 and not values['Files']:
         path = script_path + '/nueva lista.csv'
         print(path)
-        count += 1
+        # count += 1
     if values['Save']:
         path = values['Save'].split('/')[-1]
 
