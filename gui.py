@@ -5,7 +5,7 @@ import pandas as pd
 import time
 
 script_path = os.path.dirname(__file__)
-sg.theme('DarkGrey14')
+sg.theme('DarkGrey3')
 label = sg.Text('Escriba una tarea: ')
 
 inputBox = sg.InputText(tooltip='', key='Tarea')
@@ -71,6 +71,7 @@ while True:
                 # save and update
                 window['Mensaje'].update(value=f'Se guardó el archivo {path.removesuffix(".csv")}')
                 window['Tareas'].update(values=listaTareas['Entrada'])
+                window['Tarea'].update(value='')
             except (NameError, AttributeError):
                 if count == 0:
                     listaTareas = pd.DataFrame(columns=['Entrada', 'Fecha'])
@@ -83,6 +84,7 @@ while True:
                 listaTareas.to_csv(script_path + '/nueva lista.csv', index=False)
                 window['Mensaje'].update(value=f'Se guardó el archivo "nueva lista"')
                 window['Tareas'].update(values=listaTareas['Entrada'])
+                window['Tarea'].update(value='')
 
             print(listaTareas)
         case 'Editar':
@@ -95,6 +97,7 @@ while True:
                 # save and update
                 window['Mensaje'].update(value=f'Se guardó el archivo {path.removesuffix(".csv")}')
                 window['Tareas'].update(values=listaTareas['Entrada'])
+                window['Tarea'].update(value='')
             except IndexError:
                 sg.popup('Ningún elemento seleccionado')
 
