@@ -4,7 +4,8 @@ import PySimpleGUI as sg
 import pandas as pd
 import time
 
-script_path = os.path.dirname(__file__)
+script_path = os.path.dirname(os.path.abspath(__file__))
+print(script_path * 3)
 sg.theme('DarkGrey3')
 label = sg.Text('Escriba una tarea: ')
 
